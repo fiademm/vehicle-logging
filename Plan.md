@@ -48,7 +48,7 @@
   - Install Jest and Supertest
   - Configure test environment
   - Create test database setup
-- **1.1.8** Deploy basic backend to Railway (2h)
+- **1.1.8** Deploy basic backend to Render (2h)
   - Set up Railway project
   - Configure environment variables
   - Test deployment pipeline
@@ -153,7 +153,7 @@
   - Create OpenAPI/Swagger documentation
   - Test API with Postman collection
 - **1.3.12** Backend deployment and testing (2h)
-  - Deploy to Railway with database
+  - Deploy to Render with database
   - Test all endpoints in production
   - Performance monitoring setup
 
@@ -172,6 +172,7 @@
 - **2.1.2** Install and configure UI dependencies (2h)
   - Install Tailwind CSS
   - Set up shadcn/ui components
+  - Install React Icons (Themify)
   - Configure theme and design tokens
 - **2.1.3** Set up routing and state management (2h)
   - Install React Router

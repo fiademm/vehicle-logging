@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #087f5b;
+  --color-accent1: #36a67c;
+  --color-accent2: #FFC107;
+  --color-neutralLight: #F8F8F8;
+  --color-neutralMedium: #E0E0E0;
+  --color-textDark: #333333;
+  --color-textLight: #666666;
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ================================== */
+/* Responsive Design Breakpoints      */
+/* ================================== */
+
+/* Mobile-First Approach: Default styles are for mobile */
+
+/* Tablet Breakpoint */
+@media (min-width: 768px) {
+  /* Increase base font size for better readability on tablets */
+  body {
+    font-size: 16px;
+  }
+
+  /* Adjust layout for larger screens */
+}
+
+/* Desktop Breakpoint */
+@media (min-width: 1024px) {
+  /* Further increase font size for desktops */
+  body {
+    font-size: 18px;
+  }
+
+  /* Widen the container for a more spacious layout */
+}
+
+/* ================================== */
+/* Utility Classes for Responsiveness */
+/* ================================== */
+
+/* Hide element on mobile */
+.hide-on-mobile {
+  @media (max-width: 767px) {
+    display: none !important;
+  }
+}
+
+/* Hide element on tablet and larger */
+.hide-on-tablet-up {
+  @media (min-width: 768px) {
+    display: none !important;
+  }
+}

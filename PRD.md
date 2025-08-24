@@ -17,6 +17,7 @@ Create a voice-enabled, mobile-first web application for security personnel to e
 ### 2.1 Frontend
 - **Framework**: React 18 with Vite
 - **UI Library**: Tailwind CSS + shadcn/ui components
+- **Icons**: React Icons (Themify)
 - **Voice Recognition**: Web Speech API (browser-native)
 - **State Management**: React Context API + useReducer
 - **Build Tool**: Vite
@@ -24,10 +25,10 @@ Create a voice-enabled, mobile-first web application for security personnel to e
 
 ### 2.2 Backend
 - **Runtime**: Node.js with Express.js
-- **Database**: PostgreSQL (free tier on Supabase or Railway)
+- **Database**: PostgreSQL on Supabase (free tier)
 - **Authentication**: JWT with bcrypt
 - **API**: RESTful APIs
-- **Deployment**: Railway.app or Render.com (free tier)
+- **Deployment**: Render.com (free tier)
 
 ### 2.3 Additional Tools
 - **Real-time Updates**: Server-Sent Events (SSE)
@@ -41,7 +42,7 @@ Create a voice-enabled, mobile-first web application for security personnel to e
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   React Frontend│ ←→ │   Express API    │ ←→ │   PostgreSQL    │
-│   (Vercel)      │    │   (Railway)      │    │   (Supabase)    │
+│   (Vercel)      │    │   (Render)       │    │   (Supabase)    │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
          ↑
     ┌─────────────┐
@@ -266,10 +267,9 @@ const voiceCommands = {
 - **Limitations**: 100GB bandwidth/month, 1000 serverless function invocations/day
 - **Setup**: Connect GitHub repository for auto-deployment
 
-### 8.2 Backend Deployment (Railway.app)
-- **Advantages**: PostgreSQL included, automatic deployments
-- **Limitations**: $5/month after trial, but includes database
-- **Alternative**: Render.com (free tier with limitations)
+### 8.2 Backend Deployment (Render.com)
+- **Advantages**: Free tier available, automatic deployments from GitHub, integrated PostgreSQL.
+- **Limitations**: Free tier services may spin down after a period of inactivity.
 
 ### 8.3 Database (Supabase)
 - **Advantages**: 500MB storage, 2 projects, built-in auth
