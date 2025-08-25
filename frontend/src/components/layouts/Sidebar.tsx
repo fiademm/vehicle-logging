@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FiHome, FiLogOut, FiSettings, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi';
+import { FiHome, FiLogOut, FiSettings, FiChevronsLeft, FiChevronsRight, FiUser } from 'react-icons/fi';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import ThemeSwitcher from '../ui/ThemeSwitcher';
 import { UserProfile } from '../ui/UserProfile';
@@ -42,6 +42,18 @@ const Sidebar: React.FC = () => {
               to="/settings"
               icon={<FiSettings size={24} />}
               text="Settings"
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              to="/account"
+              icon={<FiUser size={24} />}
+              text="My Account"
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              to="/logout"
+              icon={<FiLogOut size={24} />}
+              text="Logout"
               isCollapsed={isCollapsed}
             />
           </ul>

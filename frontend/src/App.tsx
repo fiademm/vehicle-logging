@@ -12,8 +12,10 @@ import { Toaster } from 'react-hot-toast';
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const VehicleLogsPage = lazy(() => import('./pages/VehicleLogsPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const AccountPage = lazy(() => import('./pages/AccountPage'));
+const LogoutPage = lazy(() => import('./pages/LogoutPage'));
 
-function App() {
+const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <Router>
@@ -27,6 +29,8 @@ function App() {
                   <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/vehicle-logs" element={<VehicleLogsPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/account" element={<AccountPage />} />
+                  <Route path="/logout" element={<LogoutPage />} />
                 </Route>
               </Route>
               <Route path="/login" element={<LoginPage />} />
