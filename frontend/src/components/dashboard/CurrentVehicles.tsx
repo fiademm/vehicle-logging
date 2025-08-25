@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaAmbulance, FaMotorcycle, FaBus, FaTruck } from 'react-icons/fa';
-import { IconType } from 'react-icons';
+import type { IconType } from 'react-icons/lib';
 
 // A more robust icon mapping
 const iconMap: { [key: string]: IconType } = {

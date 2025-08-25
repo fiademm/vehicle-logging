@@ -1,6 +1,8 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import csurf from 'csurf';
 import authRouter from './routes/auth';
 import vehicleRouter from './routes/vehicle';
 import { loggingMiddleware } from './middleware/logging.middleware';
@@ -12,11 +14,23 @@ const app = express();
 const port = env.port;
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow requests from the frontend
+  credentials: true,
+}));
 app.use(express.json());
+app.use(cookieParser());
+
+const csrfProtection = csurf({ cookie: true });
+app.use(csrfProtection);
+
 app.use(loggingMiddleware);
 
 setupSwagger(app);
+
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
 
 app.use('/api/auth', authRouter);
 app.use('/api/vehicles', vehicleRouter);

@@ -63,6 +63,10 @@ class VoiceRecognitionService {
       return;
     }
 
+    if (this.listening) {
+      return;
+    }
+
     this.recognition.onstart = () => {
       this.listening = true;
       callbacks.onStart();
@@ -71,7 +75,10 @@ class VoiceRecognitionService {
       this.listening = false;
       callbacks.onEnd();
     };
-    this.recognition.onerror = (event: SpeechRecognitionError) => callbacks.onError(event.error);
+    this.recognition.onerror = (event: SpeechRecognitionError) => {
+      this.listening = false;
+      callbacks.onError(event.error);
+    };
     this.recognition.onresult = (event: SpeechRecognitionEvent) => {
       const last = event.results.length - 1;
       const transcript = event.results[last][0].transcript.trim();
@@ -79,13 +86,16 @@ class VoiceRecognitionService {
       callbacks.onResult(transcript, isFinal);
     };
 
-    if (!this.listening) {
+    try {
       this.recognition.start();
+    } catch (error) {
+      console.error('Error starting speech recognition:', error);
+      this.listening = false;
     }
   }
 
   public stop(): void {
-    if (this.recognition && this.listening) {
+    if (this.recognition) {
       this.recognition.stop();
     }
   }

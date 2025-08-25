@@ -5,18 +5,21 @@ import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useAuth } from "../hooks/useAuth"; // Import the useAuth hook
+import toast from "react-hot-toast";
 
 const schema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  passcode: z
+  username: z.string().min(1, { message: "Username is required" }),
+  password: z
     .string()
-    .min(8, { message: "Passcode must be at least 8 characters" }),
+    .min(8, { message: "Password must be at least 8 characters" }),
 });
 
 type FormData = z.infer<typeof schema>;
 
 const LoginPage = () => {
   const [showPasscode, setShowPasscode] = useState(false);
+  const { login } = useAuth(); // Get the login function from the AuthContext
   const {
     register,
     handleSubmit,
@@ -25,8 +28,17 @@ const LoginPage = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    try {
+      await login(data.username, data.password.toString());
+    } catch (error) {
+      console.error("Login failed:", error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred during login.");
+      }
+    }
   };
 
   return (
@@ -54,20 +66,20 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <Input
-                {...register("email")}
-                placeholder="Email"
-                type="email"
+                {...register("username")}
+                placeholder="Username"
+                type="text"
                 className="w-full"
-                error={errors.email?.message}
+                error={errors.username?.message}
               />
             </div>
             <div className="relative">
               <Input
-                {...register("passcode")}
-                placeholder="8-digit Passcode"
+                {...register("password")}
+                placeholder="Password"
                 type={showPasscode ? "text" : "password"}
                 className="w-full"
-                error={errors.passcode?.message}
+                error={errors.password?.message}
               />
               <button
                 type="button"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import toast from 'react-hot-toast';
 import VehicleTypeSelector from '../components/dashboard/VehicleTypeSelector';
 import VehicleStats from '../components/dashboard/VehicleStats';
@@ -20,7 +20,7 @@ import useVoiceSettings from '../hooks/useVoiceSettings';
 import type { Vehicle } from '../types/Vehicle';
 import type { Log } from '../types/Log';
 
-const WAKE_WORD = "hey security";
+const WAKE_WORD = 'hey security';
 
 const DashboardPage = (): JSX.Element => {
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -35,6 +35,14 @@ const DashboardPage = (): JSX.Element => {
   const breakpoint = useResponsive();
   const [isMobile, setIsMobile] = useState(false);
   const commandTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleEditLog = (log: Log) => {
+    console.log('Edit log:', log);
+  };
+
+  const handleDeleteLog = (id: string) => {
+    console.log('Delete log:', id);
+  };
 
   useEffect(() => {
     setIsMobile(breakpoint === 'mobile');
@@ -84,58 +92,6 @@ const DashboardPage = (): JSX.Element => {
       }
     );
   }, []);
-
-  const handleFinalCommand = useCallback(async (command: string) => {
-    if (commandTimeoutRef.current) {
-      clearTimeout(commandTimeoutRef.current);
-      commandTimeoutRef.current = null;
-    }
-    setWakeWordDetected(false);
-    await handleVoiceCommand(command);
-  }, [handleVoiceCommand]);
-
-  useEffect(() => {
-    if (!voiceService.supported() || !continuousListening) {
-      return;
-    }
-
-    const handleResult = (transcript: string, isFinal: boolean) => {
-      const lowerCaseTranscript = transcript.toLowerCase();
-
-      if (wakeWordDetected) {
-        if (isFinal) {
-          handleFinalCommand(lowerCaseTranscript);
-        } else {
-          if (commandTimeoutRef.current) {
-            clearTimeout(commandTimeoutRef.current);
-          }
-          commandTimeoutRef.current = setTimeout(() => {
-            handleFinalCommand(lowerCaseTranscript);
-          }, 3000); // 3-second timeout for command finalization
-        }
-      } else if (lowerCaseTranscript.includes(WAKE_WORD)) {
-        setWakeWordDetected(true);
-        speak("I'm listening.");
-        if (commandTimeoutRef.current) {
-          clearTimeout(commandTimeoutRef.current);
-        }
-      }
-    };
-
-    voiceService.start({
-      onStart: () => setIsListening(true),
-      onEnd: () => setIsListening(false),
-      onResult: handleResult,
-      onError: (error) => {
-        console.error('Voice recognition error:', error);
-        toast.error('Voice recognition error.');
-      },
-    });
-
-    return () => {
-      voiceService.stop();
-    };
-  }, [wakeWordDetected, handleFinalCommand, speak, continuousListening]);
 
   const handleVoiceCommand = useCallback(async (command: string) => {
     const startTime = performance.now();
@@ -250,13 +206,65 @@ const DashboardPage = (): JSX.Element => {
     }
   }, [currentVehicles, recentLogs, lastCommand, speak]);
 
+  const handleFinalCommand = useCallback(async (command: string) => {
+    if (commandTimeoutRef.current) {
+      clearTimeout(commandTimeoutRef.current);
+      commandTimeoutRef.current = null;
+    }
+    setWakeWordDetected(false);
+    await handleVoiceCommand(command);
+  }, [handleVoiceCommand]);
+
+  useEffect(() => {
+    if (!voiceService.supported() || !continuousListening) {
+      return;
+    }
+
+    const handleResult = (transcript: string, isFinal: boolean) => {
+      const lowerCaseTranscript = transcript.toLowerCase();
+
+      if (wakeWordDetected) {
+        if (isFinal) {
+          handleFinalCommand(lowerCaseTranscript);
+        } else {
+          if (commandTimeoutRef.current) {
+            clearTimeout(commandTimeoutRef.current);
+          }
+          commandTimeoutRef.current = setTimeout(() => {
+            handleFinalCommand(lowerCaseTranscript);
+          }, 3000); // 3-second timeout for command finalization
+        }
+      } else if (lowerCaseTranscript.includes(WAKE_WORD)) {
+        setWakeWordDetected(true);
+        speak("I'm listening.");
+        if (commandTimeoutRef.current) {
+          clearTimeout(commandTimeoutRef.current);
+        }
+      }
+    };
+
+    voiceService.start({
+      onStart: () => setIsListening(true),
+      onEnd: () => setIsListening(false),
+      onResult: handleResult,
+      onError: (error) => {
+        console.error('Voice recognition error:', error);
+        toast.error('Voice recognition error.');
+      },
+    });
+
+    return () => {
+      voiceService.stop();
+    };
+  }, [wakeWordDetected, handleFinalCommand, speak, continuousListening]);
+
   return (
     <div className={`p-4 md:p-6 bg-neutralLight min-h-screen ${isMobile ? 'container-mobile' : ''} ${orientation}`}>
       <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Dashboard</h1>
       <div className="space-y-4 md:space-y-6">
         <VehicleTypeSelector />
         <CurrentVehicles vehicles={currentVehicles} />
-        <RecentLogs logs={recentLogs} />
+        <RecentLogs logs={recentLogs} onEdit={handleEditLog} onDelete={handleDeleteLog} />
         <VehicleStats logs={recentLogs} />
       </div>
       <div className="fixed bottom-4 right-4 md:bottom-10 md:right-10 flex items-center space-x-2 md:space-x-4">

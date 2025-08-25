@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
 import { seedVehicleTypes } from './seeders/vehicle-types';
+import { seedUsers } from './seeders/user-seeder';
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ export const seed = async () => {
     await client.query('BEGIN');
 
     await seedVehicleTypes(client);
-
+    await seedUsers(client);
     await client.query('COMMIT');
     console.log('Seeding completed successfully.');
   } catch (error) {

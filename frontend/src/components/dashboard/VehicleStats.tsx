@@ -1,7 +1,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Log } from '../../types/Log';
+import type { Log } from '@/types/Log';
 
 interface VehicleStatProps {
   logs: Log[];

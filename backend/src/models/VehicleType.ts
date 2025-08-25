@@ -1,4 +1,4 @@
-import { pool } from '../config/database';
+import { supabase } from '../db';
 
 export interface VehicleType {
   id: number;
@@ -8,33 +8,32 @@ export interface VehicleType {
 
 export const VehicleTypeModel = {
   async getAll(): Promise<VehicleType[]> {
-    const result = await pool.query('SELECT * FROM vehicle_types');
-    return result.rows;
+    const { data, error } = await supabase.from('vehicle_types').select('*');
+    if (error) throw error;
+    return data;
   },
 
   async getById(id: number): Promise<VehicleType | null> {
-    const result = await pool.query('SELECT * FROM vehicle_types WHERE id = $1', [id]);
-    return result.rows[0] || null;
+    const { data, error } = await supabase.from('vehicle_types').select('*').eq('id', id).single();
+    if (error) throw error;
+    return data;
   },
 
   async create(name: string, color: string): Promise<VehicleType> {
-    const result = await pool.query(
-      'INSERT INTO vehicle_types (name, color) VALUES ($1, $2) RETURNING *',
-      [name, color]
-    );
-    return result.rows[0];
+    const { data, error } = await supabase.from('vehicle_types').insert([{ name, color }]).select().single();
+    if (error) throw error;
+    return data;
   },
 
   async update(id: number, name: string, color: string): Promise<VehicleType | null> {
-    const result = await pool.query(
-      'UPDATE vehicle_types SET name = $1, color = $2 WHERE id = $3 RETURNING *',
-      [name, color, id]
-    );
-    return result.rows[0] || null;
+    const { data, error } = await supabase.from('vehicle_types').update({ name, color }).eq('id', id).select().single();
+    if (error) throw error;
+    return data;
   },
 
   async delete(id: number): Promise<boolean> {
-    const result = await pool.query('DELETE FROM vehicle_types WHERE id = $1', [id]);
-    return (result.rowCount ?? 0) > 0;
+    const { error } = await supabase.from('vehicle_types').delete().eq('id', id);
+    if (error) throw error;
+    return true;
   },
 };

@@ -14,19 +14,20 @@ const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <Toaster position="top-right" reverseOrder={false} />
-        <Router>
+      <Router>
+        <AuthProvider>
+          <Toaster position="top-right" reverseOrder={false} />
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<MainLayout><DashboardPage /></MainLayout>} />
+                <Route path="/dashboard" element={<MainLayout><DashboardPage /></MainLayout>} />
               </Route>
               <Route path="/login" element={<LoginPage />} />
             </Routes>
           </Suspense>
-        </Router>
-      </AuthProvider>
+        </AuthProvider>
+      </Router>
     </ErrorBoundary>
   );
 }

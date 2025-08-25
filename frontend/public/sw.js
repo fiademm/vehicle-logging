@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vehicle-logging-cache-v2';
+const CACHE_NAME = 'vehicle-logging-cache-v3';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -45,10 +45,12 @@ self.addEventListener('fetch', event => {
             }
 
             const responseToCache = response.clone();
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
+            if (event.request.method === 'GET') {
+              caches.open(CACHE_NAME)
+                .then(cache => {
+                  cache.put(event.request, responseToCache);
+                });
+            }
 
             return response;
           }

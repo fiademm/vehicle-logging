@@ -1,24 +1,41 @@
-import { Pool } from 'pg';
-import { User } from '../models/User';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+import { supabase } from '../db'; // Import the Supabase client
+import { User } from '../models/user-model';
 
 export class UserService {
   static async findByUsername(username: string): Promise<User | null> {
-    const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-    if (result.rows.length > 0) {
-      return result.rows[0];
+    const { data, error } = await supabase
+      .from('users') // Assuming your table name is 'users'
+      .select('*')
+      .eq('username', username)
+      .single(); // Use .single() if you expect at most one row
+
+    if (error) {
+      console.error('Error finding user by username:', error);
+      return null;
     }
-    return null;
+
+    return data as User | null;
   }
 
   static async create(user: User): Promise<User> {
-    const result = await pool.query(
-      'INSERT INTO users (username, password_hash, full_name, role) VALUES ($1, $2, $3, $4) RETURNING *',
-      [user.username, user.password_hash, user.full_name, user.role || 'security']
-    );
-    return result.rows[0];
+    const { data, error } = await supabase
+      .from('users') // Assuming your table name is 'users'
+      .insert([
+        {
+          username: user.username,
+          password_hash: user.password_hash,
+          full_name: user.full_name,
+          role: user.role || 'security',
+        },
+      ])
+      .select() // Use .select() to return the inserted data
+      .single(); // Use .single() if you expect one inserted row
+
+    if (error) {
+      console.error('Error creating user:', error);
+      throw error; // Or handle the error as appropriate
+    }
+
+    return data as User;
   }
 }

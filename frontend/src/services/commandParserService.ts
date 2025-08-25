@@ -1,4 +1,5 @@
-import { commandPatterns, vehicleTypes, CommandIntent } from '../config/voiceCommands';
+import { commandPatterns, vehicleTypes } from '../config/voiceCommands';
+import type { CommandIntent } from '../config/voiceCommands';
 
 export interface Command {
   intent: CommandIntent;

@@ -1,4 +1,4 @@
-import { pool } from '../config/database';
+import { supabase } from '../db';
 
 export interface VehicleLog {
   id: number;
@@ -16,70 +16,90 @@ export interface VehicleLog {
 
 export const VehicleLogModel = {
   async create(log: Omit<VehicleLog, 'id' | 'is_deleted' | 'duration' | 'parking_fee' | 'timezone' | 'exit_time'>): Promise<VehicleLog> {
-    const result = await pool.query(
-      'INSERT INTO vehicle_logs (vehicle_type_id, entry_time, logged_by, license_plate, notes) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [log.vehicle_type_id, log.entry_time, log.logged_by, log.license_plate, log.notes]
-    );
-    return result.rows[0];
+    const { data, error } = await supabase
+      .from('vehicle_logs')
+      .insert([log])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   },
 
   async findById(id: number): Promise<VehicleLog | null> {
-    const result = await pool.query('SELECT * FROM vehicle_logs WHERE id = $1 AND is_deleted = false', [id]);
-    return result.rows[0] || null;
+    const { data, error } = await supabase
+      .from('vehicle_logs')
+      .select('*')
+      .eq('id', id)
+      .eq('is_deleted', false)
+      .single();
+    if (error) throw error;
+    return data;
   },
 
   async updateExitTime(id: number, exit_time: Date, duration: number, parking_fee: number, timezone: string): Promise<VehicleLog | null> {
-    const result = await pool.query(
-      'UPDATE vehicle_logs SET exit_time = $1, duration = $2, parking_fee = $3, timezone = $4 WHERE id = $5 AND is_deleted = false RETURNING *',
-      [exit_time, duration, parking_fee, timezone, id]
-    );
-    return result.rows[0] || null;
+    const { data, error } = await supabase
+      .from('vehicle_logs')
+      .update({ exit_time, duration, parking_fee, timezone })
+      .eq('id', id)
+      .eq('is_deleted', false)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   },
 
   async softDelete(id: number): Promise<boolean> {
-    const result = await pool.query('UPDATE vehicle_logs SET is_deleted = true WHERE id = $1 AND exit_time IS NULL', [id]);
-    return (result.rowCount ?? 0) > 0;
+    const { error } = await supabase
+      .from('vehicle_logs')
+      .update({ is_deleted: true })
+      .eq('id', id)
+      .is('exit_time', null);
+    if (error) throw error;
+    return true;
   },
 
   async findActive(): Promise<VehicleLog[]> {
-    const result = await pool.query('SELECT * FROM vehicle_logs WHERE exit_time IS NULL AND is_deleted = false ORDER BY entry_time DESC');
-    return result.rows;
+    const { data, error } = await supabase
+      .from('vehicle_logs')
+      .select('*')
+      .is('exit_time', null)
+      .eq('is_deleted', false)
+      .order('entry_time', { ascending: false });
+    if (error) throw error;
+    return data;
   },
 
   async findWithFilters(filters: { startDate?: string; endDate?: string; vehicleType?: number, page?: number, limit?: number, search?: string }): Promise<VehicleLog[]> {
-    let query = 'SELECT * FROM vehicle_logs WHERE is_deleted = false';
-    const params: any[] = [];
-    let paramIndex = 1;
+    let query = supabase
+      .from('vehicle_logs')
+      .select('*')
+      .eq('is_deleted', false);
 
     if (filters.startDate) {
-      query += ` AND entry_time >= $${paramIndex++}`;
-      params.push(filters.startDate);
+      query = query.gte('entry_time', filters.startDate);
     }
 
     if (filters.endDate) {
-      query += ` AND entry_time <= $${paramIndex++}`;
-      params.push(filters.endDate);
+      query = query.lte('entry_time', filters.endDate);
     }
 
     if (filters.vehicleType) {
-      query += ` AND vehicle_type_id = $${paramIndex++}`;
-      params.push(filters.vehicleType);
+      query = query.eq('vehicle_type_id', filters.vehicleType);
     }
 
     if (filters.search) {
-      query += ` AND (license_plate ILIKE $${paramIndex++} OR notes ILIKE $${paramIndex++})`
-      params.push(`%${filters.search}%`, `%${filters.search}%`);
+      query = query.or(`license_plate.ilike.%${filters.search}%,notes.ilike.%${filters.search}%`);
     }
 
-    query += ' ORDER BY entry_time DESC';
+    query = query.order('entry_time', { ascending: false });
 
     if (filters.limit && filters.page) {
         const offset = (filters.page - 1) * filters.limit;
-        query += ` LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
-        params.push(filters.limit, offset);
+        query = query.range(offset, offset + filters.limit - 1);
     }
 
-    const result = await pool.query(query, params);
-    return result.rows;
+    const { data, error } = await query;
+    if (error) throw error;
+    return data;
   },
 };
