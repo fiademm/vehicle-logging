@@ -1,4 +1,4 @@
-export type Log = {
+export interface Log {
   id: string;
   action: 'entry' | 'exit';
   timestamp: number;

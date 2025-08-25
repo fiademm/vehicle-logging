@@ -66,9 +66,9 @@ class VoiceRecognitionService {
     if (this.listening) {
       return;
     }
+    this.listening = true;
 
     this.recognition.onstart = () => {
-      this.listening = true;
       callbacks.onStart();
     };
     this.recognition.onend = () => {
