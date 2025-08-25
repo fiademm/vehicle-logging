@@ -8,7 +8,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <Header />
       <div className="flex flex-grow">
         <Sidebar />
-        <main className="flex-grow p-4">
+        <main className="flex-grow p-4 bg-gray-100">
           {children}
         </main>
       </div>

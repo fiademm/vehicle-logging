@@ -10,6 +10,8 @@ import './App.css';
 import { Toaster } from 'react-hot-toast';
 
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const VehicleLogsPage = lazy(() => import('./pages/VehicleLogsPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<MainLayout><DashboardPage /></MainLayout>} />
                 <Route path="/dashboard" element={<MainLayout><DashboardPage /></MainLayout>} />
+                <Route path="/vehicle-logs" element={<MainLayout><VehicleLogsPage /></MainLayout>} />
+                <Route path="/settings" element={<MainLayout><SettingsPage /></MainLayout>} />
               </Route>
               <Route path="/login" element={<LoginPage />} />
             </Routes>
