@@ -22,10 +22,12 @@ function App() {
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
               <Route element={<ProtectedRoute />}>
-                <Route path="/" element={<MainLayout><DashboardPage /></MainLayout>} />
-                <Route path="/dashboard" element={<MainLayout><DashboardPage /></MainLayout>} />
-                <Route path="/vehicle-logs" element={<MainLayout><VehicleLogsPage /></MainLayout>} />
-                <Route path="/settings" element={<MainLayout><SettingsPage /></MainLayout>} />
+                <Route element={<MainLayout />}>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/vehicle-logs" element={<VehicleLogsPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                </Route>
               </Route>
               <Route path="/login" element={<LoginPage />} />
             </Routes>

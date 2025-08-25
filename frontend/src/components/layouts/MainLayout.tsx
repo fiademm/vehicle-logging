@@ -1,15 +1,16 @@
 import React from 'react';
-import Header from './Header';
 import Sidebar from './Sidebar';
+import { Outlet } from 'react-router-dom';
 
-const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const MainLayout: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <div className="flex flex-grow">
-        <Sidebar />
-        <main className="flex-grow p-4 bg-gray-100">
-          {children}
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900">
+          <div className="p-4 md:p-6 min-h-screen">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

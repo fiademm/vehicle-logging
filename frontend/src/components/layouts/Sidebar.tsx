@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FiHome, FiLogOut, FiSettings, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi';
 import * as Tooltip from '@radix-ui/react-tooltip';
+import ThemeSwitcher from '../ui/ThemeSwitcher';
+import { UserProfile } from '../ui/UserProfile';
 
 const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -45,7 +47,11 @@ const Sidebar: React.FC = () => {
           </ul>
         </nav>
         <div className="p-2 border-t border-gray-700">
-          <button onClick={toggleSidebar} className="p-3 rounded-md hover:bg-gray-700 text-white w-full flex items-center justify-center">
+          <div className={`flex items-center ${isCollapsed ? 'flex-col space-y-2' : 'space-x-2'}`}>
+            <ThemeSwitcher />
+            <UserProfile />
+          </div>
+          <button onClick={toggleSidebar} className="p-3 rounded-md hover:bg-gray-700 text-white w-full flex items-center justify-center mt-2">
             {isCollapsed ? <FiChevronsRight size={24} /> : <FiChevronsLeft size={24} />}
           </button>
         </div>
